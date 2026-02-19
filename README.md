@@ -96,6 +96,25 @@ The installer configures Copilot's session hooks globally, but MCP servers in VS
 }
 ```
 
+### Using Copilot Without MCP
+
+If your organization has MCP disabled, Singularity still works — session hooks save notes to the filesystem directly, no MCP involved. The only gap is your AI's ability to *read* past sessions and run distillation.
+
+The workaround: add your vault's `Singularity/` folder to your VS Code workspace. Copilot in agent mode has full file access within the workspace, so it can read, search, and write session notes without MCP.
+
+Add it to your `.code-workspace` file:
+
+```json
+{
+  "folders": [
+    { "path": "." },
+    { "path": "/path/to/your/vault/Singularity" }
+  ]
+}
+```
+
+Or use **File > Add Folder to Workspace** to add it interactively.
+
 ## Privacy
 
 The MCP server is scoped to `Singularity/` inside your vault. Your personal notes are **never** sent to any provider's API. Only files within the Singularity folder are accessible.

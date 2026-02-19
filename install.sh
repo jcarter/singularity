@@ -54,10 +54,12 @@ detect_vault() {
   for dir in "${candidates[@]}"; do
     if [ -d "$dir" ]; then
       # Find vaults (dirs containing .obsidian/)
-      while IFS= read -r vault; do
-        echo "$vault"
+      local obsidian_dir
+      obsidian_dir=$(find "$dir" -maxdepth 2 -name ".obsidian" -type d 2>/dev/null | head -1)
+      if [ -n "$obsidian_dir" ]; then
+        dirname "$obsidian_dir"
         return 0
-      done < <(find "$dir" -maxdepth 2 -name ".obsidian" -type d 2>/dev/null | head -1 | xargs dirname)
+      fi
     fi
   done
   return 1
