@@ -38,7 +38,7 @@ get_file() {
   if [ -n "$SCRIPT_DIR" ]; then
     cat "$SCRIPT_DIR/$path"
   else
-    curl -fsSL "$GITHUB_RAW/$path"
+    curl -fsSL "$GITHUB_RAW/$(echo "$path" | sed 's/ /%20/g')"
   fi
 }
 
