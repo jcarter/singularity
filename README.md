@@ -70,15 +70,17 @@ The installer will:
 | Feature | Claude Code | Copilot | Cursor | Windsurf |
 |---|---|---|---|---|
 | MCP server | Auto | Per-project | Auto | Auto |
-| Session start hook | Auto | Auto | — | Auto |
-| Session end hook | Auto | Auto | — | — |
+| Session start hook | Auto | Auto (shared) | — | Auto |
+| Session end hook | Auto | Auto (shared) | — | — |
 | Auto-save sessions | ✓ | ✓ | Manual | Partial |
+
+**Claude Code + Copilot:** Both use `~/.claude/settings.json` for hooks and `~/.claude/skills/` for skills. The installer configures them once and they work for both providers.
 
 **Cursor/Windsurf note:** These providers lack full session lifecycle hooks. Use the MCP server's `create_file` tool to manually save sessions — ask your AI to "save this session to Singularity" at the end of a conversation.
 
 ### Copilot MCP (Per-Project)
 
-The installer configures Copilot's session hooks globally, but MCP servers in VS Code are per-workspace. Add this to each project's `.vscode/mcp.json`:
+MCP servers in VS Code are per-workspace. Add this to each project's `.vscode/mcp.json`:
 
 ```json
 {
@@ -146,7 +148,9 @@ Removes `~/.singularity/`, cleans provider configs, and optionally removes the v
 If `jq` isn't installed, the installer prints what to add manually. Here are the configs for reference:
 
 <details>
-<summary>Claude Code (~/.claude/settings.json)</summary>
+<summary>Claude Code + Copilot (~/.claude/settings.json)</summary>
+
+Both providers share this config file.
 
 ```json
 {
@@ -166,6 +170,9 @@ If `jq` isn't installed, the installer prints what to add manually. Here are the
       "hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-start.sh"}]
     }],
     "SessionEnd": [{
+      "hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]
+    }],
+    "Stop": [{
       "hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]
     }]
   }

@@ -51,9 +51,9 @@ info "Cleaning provider configs ..."
 # Claude Code
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 if [ -f "$CLAUDE_SETTINGS" ] && [ "$HAS_JQ" = true ]; then
-  jq 'del(.mcpServers.singularity) | del(.hooks.SessionStart) | del(.hooks.SessionEnd)' \
+  jq 'del(.mcpServers.singularity) | del(.hooks.SessionStart) | del(.hooks.SessionEnd) | del(.hooks.Stop)' \
     "$CLAUDE_SETTINGS" > "${CLAUDE_SETTINGS}.tmp" && mv "${CLAUDE_SETTINGS}.tmp" "$CLAUDE_SETTINGS"
-  ok "Claude Code — removed Singularity config"
+  ok "Claude Code / Copilot — removed Singularity config"
 fi
 rm -f "$HOME/.claude/skills/distill" 2>/dev/null
 
@@ -76,12 +76,9 @@ if [ -f "$WINDSURF_HOOKS" ] && [ "$HAS_JQ" = true ]; then
   ok "Windsurf — removed hooks"
 fi
 
-# Copilot
-GITHUB_HOOKS_DIR="$HOME/.github/hooks"
-if [ -f "$GITHUB_HOOKS_DIR/singularity-session-start.json" ] || [ -f "$GITHUB_HOOKS_DIR/singularity-session-end.json" ]; then
-  rm -f "$GITHUB_HOOKS_DIR/singularity-session-start.json" "$GITHUB_HOOKS_DIR/singularity-session-end.json"
-  ok "Copilot — removed hook files"
-fi
+# Copilot — clean up legacy ~/.github/ files from older installs
+rm -f "$HOME/.github/hooks/singularity-session-start.json" 2>/dev/null
+rm -f "$HOME/.github/hooks/singularity-session-end.json" 2>/dev/null
 rm -f "$HOME/.github/skills/distill" 2>/dev/null
 
 echo ""

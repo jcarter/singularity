@@ -177,13 +177,14 @@ if [ -f "$CLAUDE_SETTINGS" ]; then
     jq --argjson mcp "$MCP_JSON" '
       .mcpServers.singularity = $mcp |
       .hooks.SessionStart = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-start.sh"}]}] |
-      .hooks.SessionEnd = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}]
+      .hooks.SessionEnd = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}] |
+      .hooks.Stop = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}]
     ' "$CLAUDE_SETTINGS" > "${CLAUDE_SETTINGS}.tmp" && mv "${CLAUDE_SETTINGS}.tmp" "$CLAUDE_SETTINGS"
     ok "Claude Code — configured (MCP + hooks)"
   else
     warn "Claude Code — jq not found. Add MCP server and hooks manually to $CLAUDE_SETTINGS"
   fi
-  # Symlink skills
+  # Symlink skills (shared with Copilot)
   mkdir -p "$HOME/.claude/skills"
   ln -sfn "$SINGULARITY_DIR/skills/distill" "$HOME/.claude/skills/distill"
   ok "Claude Code — skills linked"
@@ -236,32 +237,28 @@ if [ -d "$WINDSURF_DIR" ]; then
 fi
 
 # --- Copilot (VS Code) ---
+# Copilot shares ~/.claude/ for hooks and skills
 if command -v code &>/dev/null; then
   info "  Found VS Code (Copilot)"
-  GITHUB_HOOKS_DIR="$HOME/.github/hooks"
-  mkdir -p "$GITHUB_HOOKS_DIR"
-
-  cat > "$GITHUB_HOOKS_DIR/singularity-session-start.json" << HOOKEOF
-{
-  "event": "sessionStart",
-  "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-start.sh"
-}
-HOOKEOF
-
-  cat > "$GITHUB_HOOKS_DIR/singularity-session-end.json" << HOOKEOF
-{
-  "event": "sessionEnd",
-  "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-end.sh"
-}
-HOOKEOF
-
-  ok "Copilot — configured (hooks)"
-
-  # Symlink skills
-  mkdir -p "$HOME/.github/skills"
-  ln -sfn "$SINGULARITY_DIR/skills/distill" "$HOME/.github/skills/distill"
-  ok "Copilot — skills linked"
-
+  if [ ! -f "$CLAUDE_SETTINGS" ]; then
+    # Claude Code wasn't detected — create ~/.claude/settings.json for Copilot
+    mkdir -p "$HOME/.claude"
+    if [ "$HAS_JQ" = true ]; then
+      echo '{}' | jq --argjson mcp "$MCP_JSON" '
+        .mcpServers.singularity = $mcp |
+        .hooks.SessionStart = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-start.sh"}]}] |
+        .hooks.Stop = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-end.sh"}]}]
+      ' > "$CLAUDE_SETTINGS"
+      ok "Copilot — configured (hooks)"
+    else
+      warn "Copilot — jq not found. Add hooks manually to $CLAUDE_SETTINGS (see README)"
+    fi
+    mkdir -p "$HOME/.claude/skills"
+    ln -sfn "$SINGULARITY_DIR/skills/distill" "$HOME/.claude/skills/distill"
+    ok "Copilot — skills linked"
+  else
+    ok "Copilot — hooks + skills shared with Claude Code"
+  fi
   # VS Code MCP config is per-workspace (.vscode/mcp.json), not global
   warn "Copilot MCP — add to each project's .vscode/mcp.json (see README)"
   CONFIGURED_PROVIDERS+=("Copilot")
