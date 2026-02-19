@@ -76,11 +76,6 @@ if [ -f "$WINDSURF_HOOKS" ] && [ "$HAS_JQ" = true ]; then
   ok "Windsurf — removed hooks"
 fi
 
-# Copilot — clean up legacy ~/.github/ files from older installs
-rm -f "$HOME/.github/hooks/singularity-session-start.json" 2>/dev/null
-rm -f "$HOME/.github/hooks/singularity-session-end.json" 2>/dev/null
-rm -f "$HOME/.github/skills/distill" 2>/dev/null
-
 echo ""
 info "Uninstall complete. Restart your AI assistant."
 echo ""
