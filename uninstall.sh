@@ -36,7 +36,7 @@ fi
 
 # --- Remove vault structure (with confirmation) ---
 if [ -n "$VAULT_PATH" ] && [ -d "$VAULT_PATH" ]; then
-  read -rp "  Remove $VAULT_PATH and all session notes? (y/N): " CONFIRM
+  read -rp "  Remove $VAULT_PATH and all session notes? (y/N): " CONFIRM </dev/tty
   if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
     rm -rf "$VAULT_PATH"
     ok "Removed vault structure"

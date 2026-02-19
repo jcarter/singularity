@@ -69,14 +69,14 @@ DETECTED_VAULT=$(detect_vault 2>/dev/null || echo "")
 
 if [ -n "$DETECTED_VAULT" ]; then
   info "Detected Obsidian vault: $DETECTED_VAULT"
-  read -rp "  Use this vault? (Y/n, or type a different path): " VAULT_INPUT
+  read -rp "  Use this vault? (Y/n, or type a different path): " VAULT_INPUT </dev/tty
   if [ -z "$VAULT_INPUT" ] || [[ "$VAULT_INPUT" =~ ^[Yy]$ ]]; then
     VAULT_PATH="$DETECTED_VAULT"
   else
     VAULT_PATH="$VAULT_INPUT"
   fi
 else
-  read -rp "  Path to your Obsidian vault: " VAULT_PATH
+  read -rp "  Path to your Obsidian vault: " VAULT_PATH </dev/tty
 fi
 
 # Expand ~ if present
@@ -93,7 +93,7 @@ info ""
 # --- Prompt for API key ---
 info "Obsidian REST API key"
 info "(Install the 'Local REST API' community plugin if you haven't already)"
-read -rp "  API key: " API_KEY
+read -rp "  API key: " API_KEY </dev/tty
 
 if [ -z "$API_KEY" ]; then
   fail "API key is required."
