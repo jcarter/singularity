@@ -51,7 +51,7 @@ info "Cleaning provider configs ..."
 # Claude Code
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 if [ -f "$CLAUDE_SETTINGS" ] && [ "$HAS_JQ" = true ]; then
-  jq 'del(.mcpServers.singularity) | del(.hooks.SessionStart) | del(.hooks.SessionEnd) | del(.hooks.Stop)' \
+  jq 'del(.mcpServers.singularity) | del(.hooks.SessionStart) | del(.hooks.SessionEnd)' \
     "$CLAUDE_SETTINGS" > "${CLAUDE_SETTINGS}.tmp" && mv "${CLAUDE_SETTINGS}.tmp" "$CLAUDE_SETTINGS"
   ok "Claude Code / Copilot — removed Singularity config"
 fi

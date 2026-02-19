@@ -177,8 +177,7 @@ if [ -f "$CLAUDE_SETTINGS" ]; then
     jq --argjson mcp "$MCP_JSON" '
       .mcpServers.singularity = $mcp |
       .hooks.SessionStart = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-start.sh"}]}] |
-      .hooks.SessionEnd = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}] |
-      .hooks.Stop = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}]
+      .hooks.SessionEnd = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]}]
     ' "$CLAUDE_SETTINGS" > "${CLAUDE_SETTINGS}.tmp" && mv "${CLAUDE_SETTINGS}.tmp" "$CLAUDE_SETTINGS"
     ok "Claude Code — configured (MCP + hooks)"
   else
@@ -247,7 +246,7 @@ if command -v code &>/dev/null; then
       echo '{}' | jq --argjson mcp "$MCP_JSON" '
         .mcpServers.singularity = $mcp |
         .hooks.SessionStart = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-start.sh"}]}] |
-        .hooks.Stop = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-end.sh"}]}]
+        .hooks.SessionEnd = [{"hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=copilot ~/.singularity/hooks/session-end.sh"}]}]
       ' > "$CLAUDE_SETTINGS"
       ok "Copilot — configured (hooks)"
     else

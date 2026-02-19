@@ -171,9 +171,6 @@ Both providers share this config file.
     }],
     "SessionEnd": [{
       "hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]
-    }],
-    "Stop": [{
-      "hooks": [{"type": "command", "command": "SINGULARITY_PROVIDER=claude ~/.singularity/hooks/session-end.sh"}]
     }]
   }
 }
