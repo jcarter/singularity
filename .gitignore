@@ -1,0 +1,4 @@
+# Secrets (but not .env.example)
+.env
+!.env.example
+.DS_Store
